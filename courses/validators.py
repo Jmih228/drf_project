@@ -22,9 +22,8 @@ class DescriptionLinksValidator:
         self.field = field
 
     def __call__(self, value):
-        print(value)
+
         tmp_val = dict(value).get(self.field)
-        print(tmp_val)
         for val in tmp_val.split():
             if 'http://' in val or 'https://' in val:
                 if val.startswith('https://www.youtube.com/') and '://' not in val[24:]:
