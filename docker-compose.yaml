@@ -25,7 +25,7 @@ services:
     tty: true
     ports:
       - '8000:8000'
-    command: python manage.py runserver 0.0.0.0:8000
+    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     depends_on:
       db:
         condition: service_healthy
@@ -39,7 +39,7 @@ services:
   celery:
     build: .
     tty: true
-    command: poetry run celery DRF worker -l INFO -P eventlet
+    command: celery -A DRF worker -l INFO -P eventlet
     restart: on-failure
     volumes:
       - .:/app
@@ -53,7 +53,7 @@ services:
   celery-beat:
     build: .
     tty: true
-    command: poetry run celery DRF beat -l INFO -S django
+    command: celery -A DRF beat -l INFO -S django
     restart: on-failure
     volumes:
       - .:/app

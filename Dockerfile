@@ -2,13 +2,8 @@ FROM python:3
 
 WORKDIR /app
 
-RUN pip install eventlet
+COPY ./requirements.txt /app/
 
-RUN pip install poetry
-
-COPY pyproject.toml poetry.lock ./
-
-RUN poetry config virtualenvs.create false \
-    && poetry install --no-interaction --no-ansi
+RUN pip install -r requirements.txt
 
 COPY . .
