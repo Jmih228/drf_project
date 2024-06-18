@@ -6,10 +6,10 @@ services:
       - '6379'
 
   db:
-    image: postgres:16-alpine
+    image: postgres:latest
     restart: on-failure
     env_file:
-      - .env
+      - .env.sample
     expose:
       - '5432'
     volumes:
@@ -20,7 +20,7 @@ services:
       retries: 2
       timeout: 10s
 
-  app:
+  django:
     build: .
     tty: true
     ports:
@@ -30,37 +30,33 @@ services:
       - db
       - redis
     volumes:
-      - .:/app
+      - .:/django
     env_file:
-      - .env
+      - .env.sample
 
   celery:
     build: .
     tty: true
     command: celery -A DRF worker -l INFO -P eventlet
     restart: on-failure
-    volumes:
-      - .:/app
     depends_on:
       - redis
       - db
-      - app
+      - django
     env_file:
-      - .env
+      - .env.sample
 
   celery-beat:
     build: .
     tty: true
     command: celery -A DRF beat -l INFO -S django
     restart: on-failure
-    volumes:
-      - .:/app
     depends_on:
       - redis
       - db
-      - app
+      - django
     env_file:
-      - .env
+      - .env.sample
 
 volumes:
   pg_data:
